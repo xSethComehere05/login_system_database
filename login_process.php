@@ -1,4 +1,5 @@
 <?php
+session_start();
 require __DIR__ . '/config_mysqli.php';
 require __DIR__ . '/csrf.php';
 

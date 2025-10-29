@@ -14,7 +14,6 @@ $email = trim($_POST['email']);
 $password = $_POST['password'];
 $confirm = $_POST['confirm_password'];
 
-// --- ตรวจสอบค่าที่กรอกเข้ามา ---
 if ($password !== $confirm) {
   $_SESSION['flash'] = 'Passwords do not match.';
   header('Location: register.php');
@@ -27,7 +26,6 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
   exit;
 }
 
-// --- ตรวจสอบว่า email ซ้ำหรือยัง ---
 $check = $mysqli->prepare('SELECT id FROM users WHERE email = ?');
 $check->bind_param('s', $email);
 $check->execute();
@@ -41,15 +39,14 @@ if ($check->num_rows > 0) {
 }
 $check->close();
 
-// --- สร้างรหัสผ่านแบบ hash ---
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
-// --- เพิ่มเข้า database ---
+
 $stmt = $mysqli->prepare('INSERT INTO users (email, display_name, password_hash) VALUES (?, ?, ?)');
 $stmt->bind_param('sss', $email, $fullname, $hash);
 
 if ($stmt->execute()) {
-  $_SESSION['flash'] = 'Registration successful! You can now log in.';
+  $_SESSION['flash_success'] = 'Registration successful! You can now log in.';
   header('Location: login.php');
 } else {
   $_SESSION['flash'] = 'Database error: ' . $mysqli->error;
